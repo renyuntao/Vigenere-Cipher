@@ -240,7 +240,8 @@ void showUsage(char *excutable_file)
 	cout<<"\n";
 	cout<<"******************************* MANUAL *******************************\n";
 	cout<<"Description:\n";
-	cout<<"A utility tool to encrypt/decrypt a file.\n\n";
+	cout<<"A utility tool to encrypt/decrypt a file.(can only encrypt/\n";
+	cout<<"decrypt alphabet.\n\n";
 	cout<<"Usage:\n";
 	cout<<excutable_file<<" [-o output_file] [-e] [-d] [-h] input_file\n\n";
 	cout<<"Parameter:\n";
