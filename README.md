@@ -10,11 +10,11 @@ A utility tool to encrypt/decrypt a file(can only encrypt/decrypt alphabet).
 **-h:** Show help.       
 <br />
 **Note:**          
-If you not use the `-o` parameter to specify a output file,      
-then the cipertext will be output to a default file,and when     
-after encrypt/decrypt the file,the original file(i.e `input_     
-file`)will be deleted.So if you want to reserve the the orig-      
-inal file,please use the `-o` parameter to specify a output      
+If you not use the `-o` parameter to specify a output file,
+then the cipertext will be output to a default file,and when
+after encrypt/decrypt the file,the original file(i.e `input_
+file`)will be deleted.So if you want to reserve the the orig-
+inal file,please use the `-o` parameter to specify a output
 file.
 # How to run the program?
 You can run the program as          
