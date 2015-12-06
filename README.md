@@ -29,3 +29,6 @@ then will create a new file named `text.cry` that contain the ciphertext.
 **Decrypt the file `text.cry`:**           
 `$ ./vigenere -d text.cry`        
 
+# Reference
+Reference [Wikipedia](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher).           
+
