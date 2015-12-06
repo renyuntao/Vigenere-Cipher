@@ -16,6 +16,15 @@ const char upper_alphabet[] = {'A','B','C','D','E','F',
 						 'S','T','U','V','W','X',
 						 'Y','Z'};
 
+const char lower_alphabet[] = {'a','b','c','d','e','f',
+                  		 'g','h','i','j','k','l',
+						 'm','n','o','p','q','r',
+						 's','t','u','v','w','x',
+						 'y','z'};
+
+const char digit[] = {'0','1','2','3','4',
+					  '5','6','7','8','9'};
+
 /*
  * Check whether the keyword is alphabet
  *
@@ -35,12 +44,6 @@ bool isAlphabet(const char *keyword)
 
 	return true;
 }
-
-const char lower_alphabet[] = {'a','b','c','d','e','f',
-                  		 'g','h','i','j','k','l',
-						 'm','n','o','p','q','r',
-						 's','t','u','v','w','x',
-						 'y','z'};
 
 /*
  * Convert the keyword to lowercase
@@ -100,23 +103,43 @@ void encrypt(const char *input_file,const char *output_file,char *keyword)
 				key_idx = (key_idx+1) % key_len;
 				row_idx = key_char - 'a';
 
-				// `msg_char` is not alpha
-				if(!isalpha(msg_char))
+				// `msg_char` is not alpha and digit
+				if(!isalpha(msg_char) && !isdigit(msg_char))
 					continue;
 
-				// `msg_char` is lowercase
-				if(islower(msg_char))
+				// `msg_char` is alphabet
+				if(isalpha(msg_char))
 				{
-					col_idx = msg_char - 'a';
-					result_idx = (row_idx + col_idx) % 26;
-					line[i] = lower_alphabet[result_idx]; 
+					// `msg_char` is lowercase
+					if(islower(msg_char))
+					{
+						col_idx = msg_char - 'a';
+						result_idx = (row_idx + col_idx) % 26;
+						line[i] = lower_alphabet[result_idx]; 
+					}
+					// `msg_char` is uppercase
+					else
+					{
+						col_idx = msg_char - 'A';
+						result_idx = (row_idx + col_idx) % 26;
+						line[i] = upper_alphabet[result_idx];
+					}
 				}
-				// `msg_char` is uppercase
-				else
+
+				// `msg_char` is digit
+				if(isdigit(msg_char))
 				{
-					col_idx = msg_char - 'A';
-					result_idx = (row_idx + col_idx) % 26;
-					line[i] = upper_alphabet[result_idx];
+					// Convert row_idx into range [0,9]
+					row_idx %= 10;
+
+					// Calculate column index
+					col_idx = msg_char - '0';
+
+					// Get the result index of `digit[]`
+					result_idx = (row_idx + col_idx)%10;
+
+					// Update line[] with cipher char
+					line[i] = digit[result_idx];
 				}
 			}
 
@@ -186,31 +209,52 @@ void decrypt(const char *input_file,const char *output_file,char *keyword)
 
 				cipher_char = line[i];
 
-				// Check whether the character is alphabet
-				if(!isalpha(cipher_char))
+				// Check whether the character is alphabet or digit
+				if(!isalpha(cipher_char) && !isdigit(cipher_char))
 					continue;
 
-				// Lowercase
-				if(islower(cipher_char))
+				// Deal with alphabet
+				if(isalpha(cipher_char))
 				{
-					cipher_idx = cipher_char - 'a';
-					msg_idx = cipher_idx - key_idx;
+					// Lowercase
+					if(islower(cipher_char))
+					{
+						cipher_idx = cipher_char - 'a';
+						msg_idx = cipher_idx - key_idx;
 
-					if(msg_idx < 0)
-						msg_idx += 26;
+						if(msg_idx < 0)
+							msg_idx += 26;
 
-					line[i] = lower_alphabet[msg_idx];
+						line[i] = lower_alphabet[msg_idx];
+					}
+					// Uppercase
+					else
+					{
+						cipher_idx = cipher_char - 'A';
+						msg_idx = cipher_idx - key_idx;
+
+						if(msg_idx < 0)
+							msg_idx += 26;
+
+						line[i] = upper_alphabet[msg_idx];
+					}
 				}
-				// Uppercase
-				else
+
+				// Deal with digit
+				if(isdigit(cipher_char))
 				{
-					cipher_idx = cipher_char - 'A';
+					// Convert `key_idx` into range [0,9]
+					key_idx %= 10;
+
+					cipher_idx = cipher_char - '0';
+
+					// Get index of digit[]
 					msg_idx = cipher_idx - key_idx;
-
 					if(msg_idx < 0)
-						msg_idx += 26;
+						msg_idx += 10;
 
-					line[i] = upper_alphabet[msg_idx];
+					// Update line[] with original mssage
+					line[i] = digit[msg_idx];
 				}
 			}
 
@@ -241,7 +285,7 @@ void showUsage(char *excutable_file)
 	cout<<"******************************* MANUAL *******************************\n";
 	cout<<"Description:\n";
 	cout<<"A utility tool to encrypt/decrypt a file.(can only encrypt/\n";
-	cout<<"decrypt alphabet.\n\n";
+	cout<<"decrypt alphabet and digit.\n\n";
 	cout<<"Usage:\n";
 	cout<<excutable_file<<" [-o output_file] [-e] [-d] [-h] input_file\n\n";
 	cout<<"Parameter:\n";
