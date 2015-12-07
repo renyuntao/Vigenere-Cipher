@@ -38,7 +38,8 @@ bool isAlphabet(const char *keyword)
 	int len = strlen(keyword);
 	for(int i = 0; i < len; ++i)
 	{
-		if(!isalpha(keyword[i]))
+		// keyword[i] is neither alphabet nor digit
+		if(!isalpha(keyword[i]) && !isdigit(keyword[i]))
 			return false;
 	}
 
@@ -55,7 +56,7 @@ void toLower(char *keyword)
 
 	for(int i = 0; i < len; ++i)
 	{
-		if(isupper(keyword[i]))
+		if(isalpha(keyword[i]) && isupper(keyword[i]))
 			keyword[i] = tolower(keyword[i]);
 	}
 }
@@ -101,7 +102,18 @@ void encrypt(const char *input_file,const char *output_file,char *keyword)
 				msg_char = line[i];
 				key_char = keyword[key_idx];
 				key_idx = (key_idx+1) % key_len;
-				row_idx = key_char - 'a';
+
+				// if key_char is alpha
+				if(isalpha(key_char))
+					row_idx = key_char - 'a';
+				// if key_char is digit
+				else if(isdigit(key_char))
+					row_idx = key_char - '0';
+				else
+				{
+					cerr<<"Keyword is error.\n";
+					return;
+				}
 
 				// `msg_char` is not alpha and digit
 				if(!isalpha(msg_char) && !isdigit(msg_char))
@@ -204,7 +216,18 @@ void decrypt(const char *input_file,const char *output_file,char *keyword)
 
 			for(int i = 0; i < cipher_len; ++i)
 			{
-				key_idx = keyword[j] - 'a';
+				// If keyword[j] is alphabet
+				if(isalpha(keyword[j]))
+					key_idx = keyword[j] - 'a';
+				// If keyword[j] is digit 
+				else if(isdigit(keyword[j]))
+					key_idx = keyword[j] - '0';
+				else
+				{
+					cerr<<"Keyword is error.\n";
+					return;
+				}
+
 				j = (j+1) % keyword_len;
 
 				cipher_char = line[i];
@@ -284,7 +307,7 @@ void showUsage(char *excutable_file)
 	cout<<"\n";
 	cout<<"******************************* MANUAL *******************************\n";
 	cout<<"Description:\n";
-	cout<<"A utility tool to encrypt/decrypt a file.(can only encrypt/\n";
+	cout<<"A simple tool to encrypt/decrypt a file.(can only encrypt/\n";
 	cout<<"decrypt alphabet and digit.\n\n";
 	cout<<"Usage:\n";
 	cout<<excutable_file<<" [-o output_file] [-e] [-d] [-h] input_file\n\n";
@@ -385,7 +408,7 @@ int main(int argc,char **argv)
 		else
 		{
 			cerr<<"The keyword is invalid.\n";
-			cerr<<"Note: only the alphabet is acceptable.\n";
+			cerr<<"Note: only the alphabet and digit is acceptable.\n";
 		}
 	}
 

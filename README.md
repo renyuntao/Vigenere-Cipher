@@ -1,5 +1,7 @@
 # Decription
-A utility tool to encrypt/decrypt a file(can only encrypt/decrypt alphabet and digit).         
+A simple tool to encrypt/decrypt a file by **keyword**.And it can only encrypt/decrypt           
+alphabet and digit.         
+As for **keyword**,only alphabet and digit is acceptable.        
 # Usage
 **./vigenere\_cipher \[-o output\_file\] \[-e\] \[-d\] \[-h\] input\_file**           
 <br />
