@@ -32,5 +32,5 @@ then will create a new file named `text.cry` that contain the ciphertext.
 `$ ./vigenere -d text.cry`        
 
 # Reference
-Reference [Wikipedia](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher).           
-
+Reference [Wikipedia](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher).In addition,I have     
+add some extra function,such as support encrypt/decrypt digit.                
