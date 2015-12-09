@@ -26,10 +26,17 @@ $ ./vigenere_cipher -h
 ```
 # Example
 **Encrypt the file `text`:**          
-`$ ./vigenere_cipher text`     
+```
+$ ./vigenere_cipher text       
+Enter the keyword: Lemon     
+```     
 then will create a new file named `text.cry` that contain the ciphertext.              
 **Decrypt the file `text.cry`:**           
-`$ ./vigenere -d text.cry`        
+```     
+$ ./vigenere -d text.cry      
+Enter the keyword: Lemon
+```        
+then a new file named `text` will be created,and the original text will in it.             
 
 # Reference
 Reference [Wikipedia](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher).                   
