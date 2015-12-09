@@ -10,41 +10,30 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
+// Uppercase character
 const char upper_alphabet[] = {'A','B','C','D','E','F',
                   		 'G','H','I','J','K','L',
 						 'M','N','O','P','Q','R',
 						 'S','T','U','V','W','X',
 						 'Y','Z'};
 
+// lowercase character
 const char lower_alphabet[] = {'a','b','c','d','e','f',
                   		 'g','h','i','j','k','l',
 						 'm','n','o','p','q','r',
 						 's','t','u','v','w','x',
 						 'y','z'};
 
+// Digit character
 const char digit[] = {'0','1','2','3','4',
 					  '5','6','7','8','9'};
 
-/*
- * Check whether the keyword is alphabet
- *
- */
-bool isAlphabet(const char *keyword)
-{
-	// Corner case
-	if(keyword == nullptr)
-		return false;
-	
-	int len = strlen(keyword);
-	for(int i = 0; i < len; ++i)
-	{
-		// keyword[i] is neither alphabet nor digit
-		if(!isalpha(keyword[i]) && !isdigit(keyword[i]))
-			return false;
-	}
+// Other printable character
+const char other[] = {' ','!','"','#','$','%','&','\'','(',')',
+   					  '*','+',',','-','.','/',':',';','<','=',
+					  '>','?','@','[','\\',']','^','_','`','{',
+					  '|','}','~'};
 
-	return true;
-}
 
 /*
  * Convert the keyword to lowercase
@@ -59,6 +48,64 @@ void toLower(char *keyword)
 		if(isalpha(keyword[i]) && isupper(keyword[i]))
 			keyword[i] = tolower(keyword[i]);
 	}
+}
+
+/*
+ * Check whether the character in range
+ * [32,47] or [58,64] or [91,96] or [123,126]
+ */
+bool isOtherPrintableChar(char ch)
+{
+	if((ch >= 32 && ch <= 47) || (ch >= 58 && ch <= 64) ||
+	   (ch >= 91 && ch <= 96) || (ch >= 123 && ch <= 126))
+	   return true;
+	else
+		return false;
+}
+
+/*
+ * Check whether the keyword is alphabet or digit or other printable character
+ *
+ */
+bool isAlphabet(const char *keyword)
+{
+	// Corner case
+	if(keyword == nullptr)
+		return false;
+	
+	int len = strlen(keyword);
+	for(int i = 0; i < len; ++i)
+	{
+		// keyword[i] is neither alphabet nor digit or other printable character
+		if(!isalpha(keyword[i]) && !isdigit(keyword[i]) && !isOtherPrintableChar(keyword[i]))
+			return false;
+	}
+
+	return true;
+}
+
+/*
+ * Get the index of `ch` in array other[].
+ *
+ */
+int getIndexOfOtherArr(char ch)
+{
+	int index;
+
+	// `ch` in range [32,47]
+	if(ch >= 32 && ch <= 47)
+		index = ch - 32;
+	// `ch` in range [58,64],`16` is the index of other[]
+	else if(ch >= 58 && ch <= 64)
+		index = (ch - 58) + 16;
+	// `ch` in range [91,96],`23` is the index of other[]
+	else if(ch >= 91 && ch <= 96)
+		index = (ch - 91) + 23;
+	// `ch` in range [123,126],`29` is the index of other[]
+	else
+		index = (ch - 123) + 29;
+
+	return index;
 }
 
 /*
@@ -109,6 +156,9 @@ void encrypt(const char *input_file,const char *output_file,char *keyword)
 				// if key_char is digit
 				else if(isdigit(key_char))
 					row_idx = key_char - '0';
+				// Other printable character
+				else if(isOtherPrintableChar(key_char))
+					row_idx = getIndexOfOtherArr(key_char);
 				else
 				{
 					cerr<<"Keyword is error.\n";
@@ -116,12 +166,14 @@ void encrypt(const char *input_file,const char *output_file,char *keyword)
 				}
 
 				// `msg_char` is not alpha and digit
-				if(!isalpha(msg_char) && !isdigit(msg_char))
+				if(!isalpha(msg_char) && !isdigit(msg_char) && !isOtherPrintableChar(msg_char))
 					continue;
 
 				// `msg_char` is alphabet
 				if(isalpha(msg_char))
 				{
+					row_idx = row_idx % 26;
+
 					// `msg_char` is lowercase
 					if(islower(msg_char))
 					{
@@ -139,7 +191,7 @@ void encrypt(const char *input_file,const char *output_file,char *keyword)
 				}
 
 				// `msg_char` is digit
-				if(isdigit(msg_char))
+				else if(isdigit(msg_char))
 				{
 					// Convert row_idx into range [0,9]
 					row_idx %= 10;
@@ -152,6 +204,19 @@ void encrypt(const char *input_file,const char *output_file,char *keyword)
 
 					// Update line[] with cipher char
 					line[i] = digit[result_idx];
+				}
+
+				// `msg_char` is other printable character
+				else
+				{
+					// Get column index
+					col_idx = getIndexOfOtherArr(msg_char);
+
+					// Get the result index of `other[]`
+					result_idx = (row_idx+col_idx)%33;
+
+					// Update line[] with cipher char
+					line[i] = other[result_idx];
 				}
 			}
 
@@ -222,6 +287,9 @@ void decrypt(const char *input_file,const char *output_file,char *keyword)
 				// If keyword[j] is digit 
 				else if(isdigit(keyword[j]))
 					key_idx = keyword[j] - '0';
+				// keyword[j] is other printable character
+				else if(isOtherPrintableChar(keyword[j]))
+					key_idx = getIndexOfOtherArr(keyword[j]);
 				else
 				{
 					cerr<<"Keyword is error.\n";
@@ -233,7 +301,7 @@ void decrypt(const char *input_file,const char *output_file,char *keyword)
 				cipher_char = line[i];
 
 				// Check whether the character is alphabet or digit
-				if(!isalpha(cipher_char) && !isdigit(cipher_char))
+				if(!isalpha(cipher_char) && !isdigit(cipher_char) && !isOtherPrintableChar(cipher_char))
 					continue;
 
 				// Deal with alphabet
@@ -243,6 +311,10 @@ void decrypt(const char *input_file,const char *output_file,char *keyword)
 					if(islower(cipher_char))
 					{
 						cipher_idx = cipher_char - 'a';
+
+						// Convert `key_idx` into range [0,26]
+						key_idx %= 26;
+
 						msg_idx = cipher_idx - key_idx;
 
 						if(msg_idx < 0)
@@ -254,6 +326,10 @@ void decrypt(const char *input_file,const char *output_file,char *keyword)
 					else
 					{
 						cipher_idx = cipher_char - 'A';
+
+						// Convert `key_idx` into range [0,26]
+						key_idx %= 26;
+
 						msg_idx = cipher_idx - key_idx;
 
 						if(msg_idx < 0)
@@ -264,7 +340,7 @@ void decrypt(const char *input_file,const char *output_file,char *keyword)
 				}
 
 				// Deal with digit
-				if(isdigit(cipher_char))
+				else if(isdigit(cipher_char))
 				{
 					// Convert `key_idx` into range [0,9]
 					key_idx %= 10;
@@ -276,8 +352,26 @@ void decrypt(const char *input_file,const char *output_file,char *keyword)
 					if(msg_idx < 0)
 						msg_idx += 10;
 
-					// Update line[] with original mssage
+					// Update line[] with original message
 					line[i] = digit[msg_idx];
+				}
+
+				// Deal with other printable character
+				else
+				{
+					// Convert `key_idx` into range [0,32]
+					key_idx %= 32;
+
+					cipher_idx = getIndexOfOtherArr(cipher_char);
+
+					// Get index of other[]
+					msg_idx = cipher_idx - key_idx;
+					if(msg_idx < 0)
+						msg_idx += 33;
+
+					// Update line[] with original message
+					line[i] = other[msg_idx];
+
 				}
 			}
 

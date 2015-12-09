@@ -1,7 +1,7 @@
 # Decription
-A simple tool to encrypt/decrypt a file by **keyword**.And it can only encrypt/decrypt           
-alphabet and digit.         
-As for **keyword**,only alphabet and digit is acceptable.        
+A simple tool to encrypt/decrypt a file by **keyword**,which can encrypt/decrypt          
+all printable character in ASCII table.           
+As for _**keyword**_,it can also access all printable character in ASCII table.          
 # Usage
 **./vigenere\_cipher \[-o output\_file\] \[-e\] \[-d\] \[-h\] input\_file**           
 <br />
@@ -33,4 +33,5 @@ then will create a new file named `text.cry` that contain the ciphertext.
 
 # Reference
 Reference [Wikipedia](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher).                   
-In addition,I have add some extra function,such as support encrypt/decrypt digit.                          
+In addition,I have enhanced the function of encrypy and decrypt,such as it can                  
+encrypt/decrypt all printable character in ASCII table.       
