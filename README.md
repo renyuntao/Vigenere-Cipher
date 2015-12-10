@@ -38,6 +38,11 @@ Enter the keyword: Lemon
 ```        
 then a new file named `text` will be created,and the original text will in it.             
 
+# Try it on my website
+You can try this tool on my website:             
+**Encrypt:** [http://www.studyandshare.info/encrypt.html](http://www.studyandshare.info/encrypt.html)           
+**Decrypt:** [http://www.studyandshare.info/decrypt.html](http://www.studyandshare.info/decrypt.html)        
+
 # Reference
 Reference [Wikipedia](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher).                   
 In addition,I have enhanced the function of encrypy and decrypt,such as it can                  
